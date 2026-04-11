@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BlogNewsletter } from "@/components/BlogNewsletter";
 import { getBlogPosts, getBlogPost, formatDate, getRelatedBlogPosts } from "@/lib/blog";
+import { renderMarkdown } from "@/lib/markdown";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
@@ -66,6 +67,9 @@ export default async function BlogPostPage({
   if (!post) {
     notFound();
   }
+
+  const renderedContent =
+    typeof post.content === "string" ? await renderMarkdown(post.content) : "";
 
   // Structured data for blog post
   const structuredData = {
@@ -161,28 +165,10 @@ export default async function BlogPostPage({
           {/* Article Content */}
           <div className="py-12 md:py-20">
             <div className="mx-auto max-w-3xl px-6">
-              <div className="prose prose-invert max-w-none
-                prose-headings:text-white prose-headings:font-bold
-                prose-h1:text-4xl prose-h1:mt-12 prose-h1:mb-6
-                prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4
-                prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-3
-                prose-p:text-zinc-300 prose-p:leading-relaxed prose-p:mb-6
-                prose-a:text-blue-400 hover:prose-a:text-blue-300 prose-a:underline
-                prose-strong:text-white prose-strong:font-semibold
-                prose-code:text-blue-300 prose-code:bg-white/5 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-                prose-pre:bg-white/5 prose-pre:border prose-pre:border-white/10 prose-pre:rounded-lg prose-pre:p-4 prose-pre:overflow-x-auto
-                prose-blockquote:border-l-4 prose-blockquote:border-blue-500/50 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-zinc-400
-                prose-ul:text-zinc-300 prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6
-                prose-ol:text-zinc-300 prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
-                prose-li:mb-2
-                prose-hr:border-white/10 prose-hr:my-8
-              ">
-                {post.content && typeof post.content === 'string' ? (
-                  <div dangerouslySetInnerHTML={{ __html: parseMarkdown(post.content) }} />
-                ) : (
-                  post.content
-                )}
-              </div>
+              <div
+                className="blog-content"
+                dangerouslySetInnerHTML={{ __html: renderedContent }}
+              />
             </div>
           </div>
         </article>
@@ -237,44 +223,4 @@ export default async function BlogPostPage({
       <Footer />
     </>
   );
-}
-
-/**
- * Simple markdown to HTML converter for content
- * Handles basic markdown syntax
- */
-function parseMarkdown(content: string): string {
-  let html = content;
-
-  // Headers
-  html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
-  html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
-  html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
-
-  // Bold
-  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
-
-  // Italic
-  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  html = html.replace(/_(.+?)_/g, '<em>$1</em>');
-
-  // Code blocks
-  html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-
-  // Inline code
-  html = html.replace(/`(.*?)`/g, '<code>$1</code>');
-
-  // Links
-  html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
-
-  // Line breaks
-  html = html.replace(/\n\n/g, '</p><p>');
-  html = '<p>' + html + '</p>';
-
-  // Lists
-  html = html.replace(/^\* (.*?)$/gm, '<li>$1</li>');
-  html = html.replace(/(<li>[\s\S]*<\/li>)/, '<ul>$1</ul>');
-
-  return html;
 }
