@@ -24,6 +24,9 @@ export function Header() {
           <a href="#how-it-works" className="text-sm text-zinc-400 transition hover:text-white">
             How It Works
           </a>
+          <Link href="/blog" className="text-sm text-zinc-400 transition hover:text-white">
+            Blog
+          </Link>
           <a href="#community" className="text-sm text-zinc-400 transition hover:text-white">
             Community
           </a>
@@ -71,6 +74,7 @@ export function Header() {
             <a href="#features" onClick={() => setMobileOpen(false)} className="text-sm text-zinc-400 hover:text-white">Features</a>
             <a href="#use-cases" onClick={() => setMobileOpen(false)} className="text-sm text-zinc-400 hover:text-white">Use Cases</a>
             <a href="#how-it-works" onClick={() => setMobileOpen(false)} className="text-sm text-zinc-400 hover:text-white">How It Works</a>
+            <Link href="/blog" onClick={() => setMobileOpen(false)} className="text-sm text-zinc-400 hover:text-white">Blog</Link>
             <a href="#community" onClick={() => setMobileOpen(false)} className="text-sm text-zinc-400 hover:text-white">Community</a>
             <a href="https://docs.pyworkflow.dev" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-400 hover:text-white">Docs</a>
             <a href="https://github.com/QualityUnit/pyworkflow" target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-400 hover:text-white">GitHub</a>
