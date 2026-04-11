@@ -2,127 +2,113 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { getBlogPosts } from "@/lib/blog";
+import { BlogCard } from "@/components/BlogCard";
+import { getBlogPosts, formatDate } from "@/lib/blog";
 
 export const metadata: Metadata = {
-  title: "Blog - PyWorkflow",
+  title: "Blog | PyWorkflow - Distributed Workflow Orchestration",
   description:
-    "Learn about distributed workflow orchestration, Python best practices, and PyWorkflow insights from our team.",
+    "Learn about distributed workflow orchestration, Python automation, and best practices for building reliable systems with PyWorkflow.",
+  keywords: [
+    "workflow blog",
+    "tutorials",
+    "distributed systems",
+    "python",
+    "orchestration",
+    "celery",
+    "event sourcing",
+  ],
   openGraph: {
-    title: "Blog - PyWorkflow",
+    title: "Blog | PyWorkflow",
     description:
-      "Learn about distributed workflow orchestration, Python best practices, and PyWorkflow insights from our team.",
+      "Learn about distributed workflow orchestration, Python automation, and best practices for building reliable systems with PyWorkflow.",
     url: "https://pyworkflow.dev/blog",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog | PyWorkflow",
+    description:
+      "Learn about distributed workflow orchestration, Python automation, and best practices for building reliable systems with PyWorkflow.",
   },
 };
 
 export default function BlogPage() {
   const posts = getBlogPosts();
-  const sortedPosts = posts.sort(
-    (a, b) =>
-      new Date(b.metadata.publishedAt).getTime() -
-      new Date(a.metadata.publishedAt).getTime()
-  );
 
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          {/* Header */}
-          <div className="mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Blog
-            </h1>
-            <p className="text-xl text-slate-300">
-              Insights on distributed workflow orchestration, Python best practices, and PyWorkflow development.
-            </p>
-          </div>
-
-          {/* Blog Posts Grid */}
-          {sortedPosts.length > 0 ? (
-            <div className="grid gap-8 md:gap-12">
-              {sortedPosts.map((post) => (
-                <article
-                  key={post.slug}
-                  className="group border border-slate-700 rounded-lg p-8 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 bg-slate-800/50 backdrop-blur"
-                >
-                  <div className="flex flex-col gap-3">
-                    {/* Category Badge */}
-                    {post.metadata.category && (
-                      <span className="inline-block w-fit px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium">
-                        {post.metadata.category}
-                      </span>
-                    )}
-
-                    {/* Title */}
-                    <Link href={`/blog/${post.slug}`}>
-                      <h2 className="text-2xl md:text-3xl font-bold text-white group-hover:text-blue-400 transition-colors">
-                        {post.metadata.title}
-                      </h2>
-                    </Link>
-
-                    {/* Description */}
-                    <p className="text-slate-300 text-lg">
-                      {post.metadata.description}
-                    </p>
-
-                    {/* Meta Info */}
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400 pt-4">
-                      <span>{post.metadata.author}</span>
-                      <span>•</span>
-                      <time dateTime={post.metadata.publishedAt}>
-                        {new Date(post.metadata.publishedAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
-                      </time>
-                      {post.metadata.readingTime && (
-                        <>
-                          <span>•</span>
-                          <span>{post.metadata.readingTime} min read</span>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Tags */}
-                    {post.metadata.tags && post.metadata.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {post.metadata.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 bg-slate-700 text-slate-300 rounded text-xs"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Read More Link */}
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="inline-block mt-4 text-blue-400 hover:text-blue-300 font-semibold transition-colors"
-                    >
-                      Read More →
-                    </Link>
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20">
-              <p className="text-slate-300 text-lg">
-                No blog posts yet. Check back soon!
+      <main className="flex-1">
+        {/* Blog Header */}
+        <section className="border-b border-white/10 pt-32 pb-12 md:pb-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="max-w-3xl">
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+                PyWorkflow Blog
+              </h1>
+              <p className="mt-4 text-lg text-zinc-400">
+                Tutorials, best practices, and insights about distributed workflow orchestration, Python automation, and building reliable systems.
               </p>
             </div>
-          )}
-        </div>
+          </div>
+        </section>
+
+        {/* Blog Posts Grid */}
+        <section className="py-12 md:py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            {posts.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-zinc-400">No blog posts yet. Check back soon!</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {posts.map((post) => (
+                  <BlogCard
+                    key={post.slug}
+                    slug={post.slug}
+                    title={post.metadata.title}
+                    excerpt={post.metadata.excerpt}
+                    date={post.metadata.date}
+                    author={post.metadata.author}
+                    readingTime={post.metadata.readingTime}
+                    tags={post.metadata.tags}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="border-t border-white/10 py-12 md:py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center md:p-12">
+              <h2 className="text-2xl font-bold text-white sm:text-3xl">
+                Ready to build better workflows?
+              </h2>
+              <p className="mt-4 text-zinc-400">
+                Get started with PyWorkflow today and explore the power of distributed, durable workflow orchestration.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row justify-center">
+                <Link
+                  href="/"
+                  className="rounded-lg border border-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/5"
+                >
+                  Back to Home
+                </Link>
+                <a
+                  href="https://docs.pyworkflow.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-zinc-200"
+                >
+                  View Documentation
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>
