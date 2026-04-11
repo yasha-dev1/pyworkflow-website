@@ -16,16 +16,17 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const post = getBlogPost(params.slug);
+  const { slug } = await params;
+  const post = getBlogPost(slug);
 
   if (!post) {
     return {};
   }
 
   const baseUrl = "https://pyworkflow.dev";
-  const url = `${baseUrl}/blog/${params.slug}`;
+  const url = `${baseUrl}/blog/${slug}`;
 
   return {
     title: `${post.metadata.title} | PyWorkflow Blog`,
@@ -53,13 +54,14 @@ export async function generateMetadata({
   };
 }
 
-export default function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const post = getBlogPost(params.slug);
-  const relatedPosts = getRelatedBlogPosts(params.slug, 3);
+  const { slug } = await params;
+  const post = getBlogPost(slug);
+  const relatedPosts = getRelatedBlogPosts(slug, 3);
 
   if (!post) {
     notFound();
